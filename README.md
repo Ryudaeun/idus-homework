@@ -66,19 +66,19 @@ com.idus.homework
 
 - 회원 정보를 저장하는 테이블
 
-  | name       | type         | key | nullable | description        |
-  |--------------| --- | --- | --- | --- |
-  | id         | bigint       | PK  | false    | 회원 id              |
-  | username   | varchar(30)  |     | false    | 로그인 아이디            |
-  | password   | text         |     | false    | 비밀번호               |
-  | name       | varchar(20)  |     | false    | 이름                 |
-  | nickname   | varchar(30)  |     | false    | 별명                 |
-  | phone      | varchar(20)  |     | false    | 전화번호               |
-  | email      | varchar(100) |     | false    | 이메일                |
-  | gender     | char(1)      |     | true     | 성별 (F: 여자 / M: 남자) |
-  | role       | varchar(5)   |     | false    | 권한                 |
-  | created_at | timestamp    |     | false    | 생성일시                 |
-  | updated_at | timestamp    |     | true     | 수정일시                 |
+  | name       | type          | key | nullable | description        |
+  | --- | --- | --- | --- | --- |
+  | id         | bigint        | PK  | false    | 회원 id              |
+  | username   | varchar(30)   |     | false    | 로그인 아이디            |
+  | password   | text          |     | false    | 비밀번호               |
+  | name       | varchar(20)   |     | false    | 이름                 |
+  | nickname   | varchar(30)   |     | false    | 별명                 |
+  | phone      | varchar(20)   |     | false    | 전화번호               |
+  | email      | varchar(100)  |     | false    | 이메일                |
+  | gender     | char(1)       |     | true     | 성별 (F: 여자 / M: 남자) |
+  | role       | varchar(5)    |     | false    | 권한                 |
+  | created_at | datetime      |     | false    | 생성일시                 |
+  | updated_at | datetime      |     | true     | 수정일시                 |
 
 ### Order
 
@@ -89,10 +89,10 @@ com.idus.homework
   | id           | bigint       | PK  | false    | 주문 id         |
   | order_no     | varchar(12)  |     | false    | 주문번호          |
   | product_name | varchar(100) |     | false    | 제품명           |
-  | payment_date | timestamp    |     | false    | 결제일시          |
+  | payment_date | datetime     |     | false    | 결제일시          |
   | member_id    | bigint       |     | false    | 회원 id         |
-  | created_at   | timestamp    |     | false    | 생성일시          |
-  | updated_at   | timestamp    |     | true     | 수정일시          |
+  | created_at   | datetime     |     | false    | 생성일시          |
+  | updated_at   | datetime     |     | true     | 수정일시          |
 
 ---
 

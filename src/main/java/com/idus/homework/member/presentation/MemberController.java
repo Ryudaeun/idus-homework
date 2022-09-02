@@ -1,5 +1,6 @@
 package com.idus.homework.member.presentation;
 
+import com.idus.homework.member.application.MemberApplicationService;
 import com.idus.homework.member.application.MemberService;
 import com.idus.homework.member.domain.Member;
 import com.idus.homework.member.domain.Members;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +20,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final MemberApplicationService memberApplicationService;
     private final JwtProvider jwtProvider;
 
     @PostMapping("/sign-up")
@@ -47,7 +48,7 @@ public class MemberController {
             @Valid @RequestBody MemberSearchDto memberSearchDto,
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        Members members = memberService.getMembers(memberSearchDto, pageable);
+        Members members = memberApplicationService.getMembers(memberSearchDto, pageable);
         return MemberDto.MemberPageResponse.from(members);
     }
 }

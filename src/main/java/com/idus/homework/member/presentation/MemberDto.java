@@ -80,21 +80,24 @@ public class MemberDto {
     @Builder
     @Getter
     public static class MemberResponse {
+        private Long id;
         private String username;
         private String name;
         private String nickname;
         private String phone;
         private String email;
         private String gender;
+        private String orderNo;
 
         public static MemberResponse from(Member member) {
             return MemberResponse.builder()
-                    .username(member.getUsername())
+                    .id(member.getId())
                     .name(member.getName())
                     .nickname(member.getNickname())
                     .phone(member.getFormattedPhone())
                     .email(member.getEmail())
                     .gender(member.getGender() != null ? member.getGender().getName() : "")
+                    .orderNo(member.getOrder() != null ? member.getOrder().getOrderNo() : "")
                     .build();
         }
     }

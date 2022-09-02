@@ -50,12 +50,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void signUp(Member member) {
+    public Member signUp(Member member) {
         member.setUserRole();
         member.encodePassword(passwordEncoder);
 
         try {
-            memberStore.save(member);
+            return memberStore.save(member);
         } catch (DuplicateKeyException e) {
             throw new IllegalArgumentException(ErrorCode.ALREADY_EXISTS_USERNAME.getMessage());
         }
