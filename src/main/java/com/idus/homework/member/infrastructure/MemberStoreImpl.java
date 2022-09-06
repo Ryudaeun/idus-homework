@@ -2,10 +2,10 @@ package com.idus.homework.member.infrastructure;
 
 import com.idus.homework.member.domain.Member;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 @Transactional
 public class MemberStoreImpl implements MemberStore {

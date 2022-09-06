@@ -1,12 +1,13 @@
 package com.idus.homework.security.config;
 
+import com.idus.homework.security.handler.CustomAccessDeniedHandler;
+import com.idus.homework.security.handler.CustomAuthenticationEntryPoint;
 import com.idus.homework.security.jwt.JwtAuthenticationFilter;
 import com.idus.homework.security.jwt.JwtAuthorizationFilter;
 import com.idus.homework.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,8 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -36,11 +37,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeRequests(config -> config
-                        .antMatchers("/login", "/sign-up", "/").permitAll()
+                        .antMatchers("/login", "/sign-up").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(config -> config.authenticationEntryPoint(new HttpStatusEntryPoint((HttpStatus.UNAUTHORIZED))))
+                .exceptionHandling(config -> config
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
+                )
                 .apply(new AuthorizationFilter())
                 .and()
                 .build();
@@ -51,7 +55,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http
-                    .addFilter(new JwtAuthorizationFilter(authenticationManager, jwtProvider))
+                    .addFilterBefore(new JwtAuthorizationFilter(jwtProvider), BasicAuthenticationFilter.class)
                     .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider),
                             UsernamePasswordAuthenticationFilter.class);
         }

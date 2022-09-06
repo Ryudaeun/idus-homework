@@ -6,13 +6,13 @@ import com.idus.homework.member.dto.MemberSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class MemberReaderImpl implements MemberReader {
     private final MemberRepository memberRepository;

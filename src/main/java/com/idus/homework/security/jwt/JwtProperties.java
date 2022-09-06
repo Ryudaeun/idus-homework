@@ -7,5 +7,5 @@ public interface JwtProperties {
     String refreshHeader = "refreshToken";
     long accessTokenExpireTime = 60 * 60 * 1000;
     long refreshTokenExpireTime = 60 * 10000 * 1000;
-    int refreshTokenReIssueDate = 7;
+    int refreshTokenReIssueDate = 3;
 }

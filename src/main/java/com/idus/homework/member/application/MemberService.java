@@ -9,5 +9,5 @@ public interface MemberService {
     Member getMemberByUsername(String username);
     Member getMember(Long id);
     Members getMembers(MemberSearchDto memberSearchDto, Pageable pageable);
-    void signUp(Member member);
+    Member signUp(Member member);
 }

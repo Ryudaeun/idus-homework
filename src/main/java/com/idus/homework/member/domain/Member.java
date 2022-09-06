@@ -1,6 +1,7 @@
 package com.idus.homework.member.domain;
 
 import com.idus.homework.common.entity.BaseEntity;
+import com.idus.homework.order.domain.Order;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -45,6 +46,9 @@ public class Member extends BaseEntity implements Serializable {
     @Column(nullable = false, length = 5)
     private Role role;
 
+    @Transient
+    private Order order;
+
     public String getFormattedPhone() {
         if (phone.length() == 8) {
             return phone.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
@@ -56,10 +60,6 @@ public class Member extends BaseEntity implements Serializable {
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
         setPassword(passwordEncoder.encode(password));
-    }
-
-    public boolean matchPassword(PasswordEncoder passwordEncoder, String password) {
-        return passwordEncoder.matches(password, getPassword());
     }
 
     public void setUserRole() {
