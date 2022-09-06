@@ -1,25 +1,27 @@
 package com.idus.homework.security.jwt;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.idus.homework.common.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.springframework.security.authentication.AuthenticationManager;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
+@RequiredArgsConstructor
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
-        super(authenticationManager);
-        this.jwtProvider = jwtProvider;
-    }
-
+    private static final List<String> EXCLUDE_URL =
+            List.of("/sign-up", "/login");
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -30,12 +32,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             if (jwtProvider.getRedisAccessToken(accessToken) != null ||
                     jwtProvider.getRedisRefreshToken(refreshToken) == null) {
-                throw new ExpiredJwtException(null, null, null);
+                throw new TokenExpiredException(ErrorCode.EXPIRED_TOKEN.getMessage(), null);
             }
 
             jwtProvider.validateToken(refreshToken);
             String username = jwtProvider.getUsername(refreshToken);
-            refreshToken = jwtProvider.reIssueRefreshToken(refreshToken, username, response);
+            jwtProvider.reIssueRefreshToken(refreshToken, username, response);
 
             try {
                 jwtProvider.validateToken(accessToken);
@@ -44,13 +46,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 jwtProvider.setHeaderAccessToken(response, accessToken);
             }
 
-            SecurityContextHolder.getContext().setAuthentication(jwtProvider.getAuthentication(refreshToken));
-        } catch (ExpiredJwtException e) {
-            request.setAttribute("JwtException", "토큰이 만료되었습니다. 다시 로그인 해주세요.");
+            SecurityContextHolder.getContext().setAuthentication(jwtProvider.getAuthentication(accessToken));
+        } catch (SecurityException | MalformedJwtException | IllegalArgumentException e) {
+            request.setAttribute("exception", ErrorCode.INVALID_TOKEN.name());
+        } catch (ExpiredJwtException | TokenExpiredException e) {
+            request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.name());
+        } catch (UnsupportedJwtException e) {
+            request.setAttribute("exception", ErrorCode.UNSUPPORTED_TOKEN.name());
         } catch (Exception e) {
-            request.setAttribute("JwtException", "잘못된 토큰입니다.");
+            e.printStackTrace();
         }
 
         chain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 }

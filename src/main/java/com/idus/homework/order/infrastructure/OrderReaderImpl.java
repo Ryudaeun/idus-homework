@@ -5,8 +5,6 @@ import com.idus.homework.order.domain.Orders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.ZonedDateTime;
-
 @Repository
 @RequiredArgsConstructor
 public class OrderReaderImpl implements OrderReader {
@@ -22,8 +20,4 @@ public class OrderReaderImpl implements OrderReader {
         return orderRepository.findTop1ByMemberIdOrderByCreatedAtDesc(memberId).orElse(null);
     }
 
-    @Override
-    public int countForOrderNo(Long memberId, ZonedDateTime start, ZonedDateTime end) {
-        return orderRepository.countByMemberIdAndCreatedAtBetween(memberId, start, end);
-    }
 }

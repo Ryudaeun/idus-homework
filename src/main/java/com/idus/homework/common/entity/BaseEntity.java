@@ -1,5 +1,6 @@
 package com.idus.homework.common.entity;
 
+import com.idus.homework.common.util.DateUtil;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -16,12 +17,12 @@ public abstract class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = ZonedDateTime.now();
-        this.updatedAt = ZonedDateTime.now();
+        this.createdAt = DateUtil.getNow();
+        this.updatedAt = DateUtil.getNow();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = ZonedDateTime.now();
+        this.updatedAt = DateUtil.getNow();
     }
 }

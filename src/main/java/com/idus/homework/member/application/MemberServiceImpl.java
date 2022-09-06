@@ -7,12 +7,13 @@ import com.idus.homework.member.dto.MemberSearchDto;
 import com.idus.homework.member.infrastructure.MemberReader;
 import com.idus.homework.member.infrastructure.MemberStore;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
 
 @Service
@@ -56,7 +57,7 @@ public class MemberServiceImpl implements MemberService {
 
         try {
             return memberStore.save(member);
-        } catch (DuplicateKeyException e) {
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
             throw new IllegalArgumentException(ErrorCode.ALREADY_EXISTS_USERNAME.getMessage());
         }
     }

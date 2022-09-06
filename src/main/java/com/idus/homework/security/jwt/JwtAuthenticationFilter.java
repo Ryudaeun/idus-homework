@@ -1,6 +1,8 @@
 package com.idus.homework.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.idus.homework.common.ErrorCode;
+import com.idus.homework.common.ResponseDto;
 import com.idus.homework.member.presentation.MemberDto;
 import com.idus.homework.security.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +33,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword(), null)
             );
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -48,5 +51,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         jwtProvider.setRedisRefreshToken(refreshToken, username);
         jwtProvider.setHeaderAccessToken(response, accessToken);
         jwtProvider.setHeaderRefreshToken(response, refreshToken);
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        ResponseDto errorPayload = ResponseDto.builder()
+                .code(ErrorCode.CHECK_LOGIN_INFO.name())
+                .message(ErrorCode.CHECK_LOGIN_INFO.getMessage())
+                .status(response.getStatus())
+                .build();
+
+        response.getWriter().print(new ObjectMapper().writeValueAsString(errorPayload));
     }
 }

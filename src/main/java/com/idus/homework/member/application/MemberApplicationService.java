@@ -1,5 +1,6 @@
 package com.idus.homework.member.application;
 
+import com.idus.homework.member.domain.Member;
 import com.idus.homework.member.domain.Members;
 import com.idus.homework.member.dto.MemberSearchDto;
 import com.idus.homework.order.application.OrderService;
@@ -12,6 +13,12 @@ import org.springframework.stereotype.Service;
 public class MemberApplicationService {
     private final MemberService memberService;
     private final OrderService orderService;
+
+    public Member getMember(Long id) {
+        Member member = memberService.getMember(id);
+        member.setOrder(orderService.getLastOrder(member.getId()));
+        return member;
+    }
 
     public Members getMembers(MemberSearchDto memberSearchDto, Pageable pageable) {
         Members members = memberService.getMembers(memberSearchDto, pageable);

@@ -3,9 +3,9 @@ package com.idus.homework.security.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.idus.homework.common.ErrorCode;
 import com.idus.homework.common.service.RedisService;
 import com.idus.homework.security.service.CustomUserDetailsService;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -81,31 +81,27 @@ public class JwtProvider {
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
-    public String reIssueRefreshToken(String refreshToken, String username, HttpServletResponse response) {
-        String newRefreshToken = refreshToken;
-
-        if (checkReIssueRefreshToken(refreshToken)) {
-            newRefreshToken = createRefreshToken(username);
+    public void reIssueRefreshToken(String refreshToken, String username, HttpServletResponse response) {
+        if (checkNeedToReIssueRefreshToken(refreshToken)) {
+            String newRefreshToken = createRefreshToken(username);
             setHeaderRefreshToken(response, newRefreshToken);
-            setRedisRefreshToken(username, newRefreshToken);
+            setRedisRefreshToken(newRefreshToken, username);
         }
-
-        return newRefreshToken;
     }
 
-    public boolean validateToken(String token) {
+    public void validateToken(String token) {
         try {
-            return getTokenExpiresAt(token).before(new Date());
-        } catch (ExpiredJwtException e) {
-            return false;
+            getTokenExpiresAt(token);
+        } catch (TokenExpiredException e) {
+            throw new TokenExpiredException(ErrorCode.EXPIRED_TOKEN.getMessage(), null);
         }
     }
 
     public void validateHeader(HttpServletRequest request) {
         if (request.getHeader(JwtProperties.accessHeader) == null) {
-            throw new RuntimeException("잘못된 Access Token 입니다.");
+            throw new IllegalArgumentException(ErrorCode.ACCESS_TOKEN_NOT_EXISTS.getMessage());
         } else if (request.getHeader(JwtProperties.refreshHeader) == null) {
-            throw new RuntimeException("잘못된 Refresh Token 입니다.");
+            throw new IllegalArgumentException(ErrorCode.REFRESH_TOKEN_NOT_EXISTS.getMessage());
         }
     }
 
@@ -129,7 +125,7 @@ public class JwtProvider {
         redisService.deleteValues(refreshToken);
     }
 
-    private boolean checkReIssueRefreshToken(String refreshToken) {
+    private boolean checkNeedToReIssueRefreshToken(String refreshToken) {
         try {
             Date expiresAt = getTokenExpiresAt(refreshToken);
             Date afterDays = Timestamp.valueOf(LocalDateTime.now().plusDays(JwtProperties.refreshTokenReIssueDate));
@@ -161,8 +157,8 @@ public class JwtProvider {
             Long expiresAtTime = getTokenExpiresAt(accessToken).getTime();
             Long nowTime = new Date().getTime();
             setRedisAccessToken(accessToken, "logout", (expiresAtTime - nowTime));
-        } catch (Exception e) {
-            throw new RuntimeException("잘못된 Refresh Token 입니다.");
+        } catch (TokenExpiredException e) {
+            throw new TokenExpiredException(ErrorCode.EXPIRED_TOKEN.getMessage(), null);
         }
     }
 }
