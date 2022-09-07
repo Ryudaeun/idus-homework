@@ -14,6 +14,7 @@
 - Gradle
 - JPA
 - MySQL
+- Redis (refreshToken 저장)
 
 ### Run in development
 
@@ -51,16 +52,24 @@ com.idus.homework
 ## Requirement
 
 - 회원 가입
+  - 로그인 아이디 중복 체크
 - 회원 로그인(인증)
 - 회원 로그아웃
 - 단일 회원 상세 정보 조회
+- 주문 등록 :
+  - 추가 개발 항목
+  - 주문번호는 등록 시 자동 발번됩니다.
 - 단일 회원의 주문 목록 조회
 - 여러 회원 목록 조회 :
-    - 페이지네이션으로 일정 단위로 조회합니다.
-    - 이름, 이메일을 이용하여 검색 기능이 필요합니다.
-    - 각 회원의 마지막 주문 정보
+  - 페이지네이션으로 일정 단위로 조회합니다.
+  - 이름, 이메일을 이용하여 검색 기능이 필요합니다.
+  - 각 회원의 마지막 주문 정보 
 
 ## Entity
+
+### Create Table SQL Path
+
+- src/main/resources/db/IdusHomework.sql
 
 ### Member
 
@@ -93,9 +102,3 @@ com.idus.homework
   | member_id    | bigint       |     | false    | 회원 id         |
   | created_at   | datetime     |     | false    | 생성일시          |
   | updated_at   | datetime     |     | true     | 수정일시          |
-
----
-
-### Reference
-
-- DB Replication: https://eddies.tistory.com/35

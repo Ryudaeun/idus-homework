@@ -107,7 +107,7 @@ public class MemberController {
     @ResponseStatus(HttpStatus.OK)
     public MemberDto.MemberPageResponse getMembers(
             @Parameter(name = "memberSearchDto", description = "검색조건", in = ParameterIn.QUERY)
-            @Valid @RequestParam MemberSearchDto memberSearchDto,
+            MemberSearchDto memberSearchDto,
             @Parameter(name = "pageable", description = "페이지네이션", in = ParameterIn.QUERY)
             @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable
     ) {
