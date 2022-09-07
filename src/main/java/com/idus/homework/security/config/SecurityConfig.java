@@ -18,11 +18,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtProvider jwtProvider;
+    private static final List<String> excludeUrl =
+            List.of("/sign-up", "/login",
+                    "/swagger*/**", "/v3/api-docs/**", "/configuration/**", "/webjars/**");
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
@@ -37,7 +42,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeRequests(config -> config
-                        .antMatchers("/login", "/sign-up").permitAll()
+                        .antMatchers(excludeUrl.toArray(new String[0])).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -55,7 +60,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http
-                    .addFilterBefore(new JwtAuthorizationFilter(jwtProvider), BasicAuthenticationFilter.class)
+                    .addFilterBefore(new JwtAuthorizationFilter(jwtProvider, excludeUrl), BasicAuthenticationFilter.class)
                     .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtProvider),
                             UsernamePasswordAuthenticationFilter.class);
         }
