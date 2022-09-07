@@ -21,6 +21,7 @@ public class InterceptorExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseDto> conflictExceptionHandler(RuntimeException e) {
+        e.printStackTrace();
         ResponseDto errorPayload = ResponseDto.builder()
                 .message(e.getMessage())
                 .status(HttpStatus.CONFLICT.value())
