@@ -61,8 +61,4 @@ public class Member extends BaseEntity implements Serializable {
     public void encodePassword(PasswordEncoder passwordEncoder) {
         setPassword(passwordEncoder.encode(password));
     }
-
-    public void setUserRole() {
-        setRole(Role.USER);
-    }
 }

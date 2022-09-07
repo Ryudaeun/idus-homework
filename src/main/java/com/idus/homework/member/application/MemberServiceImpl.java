@@ -52,7 +52,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public Member signUp(Member member) {
-        member.setUserRole();
         member.encodePassword(passwordEncoder);
 
         try {
