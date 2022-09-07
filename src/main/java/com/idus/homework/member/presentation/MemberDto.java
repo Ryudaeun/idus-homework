@@ -4,6 +4,7 @@ import com.idus.homework.common.util.DateUtil;
 import com.idus.homework.member.domain.Gender;
 import com.idus.homework.member.domain.Member;
 import com.idus.homework.member.domain.Members;
+import com.idus.homework.member.domain.Role;
 import com.idus.homework.order.domain.Order;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -80,6 +81,7 @@ public class MemberDto {
                     .phone(phone)
                     .email(email)
                     .gender(gender)
+                    .role(Role.USER)
                     .build();
         }
     }
