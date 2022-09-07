@@ -3,6 +3,7 @@ package com.idus.homework.order.presentation;
 import com.idus.homework.common.util.DateUtil;
 import com.idus.homework.order.domain.Order;
 import com.idus.homework.order.domain.Orders;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +19,18 @@ public class OrderDto {
     @Setter
     @RequiredArgsConstructor
     public static class OrderRequest {
+        @Schema(description = "제품명", example = "추석 선물세트🌝")
         @NotBlank(message = "제품명을 입력해주세요.")
         @Size(min = 1, max = 100, message = "제품명은 1~100자 내외로 입력해주세요.")
         private String productName;
 
+        @Schema(description = "결제일시", example = "yyyy-MM-dd HH:mm:ss")
         @NotBlank(message = "결제일시를 입력해주세요.")
         @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
         private String paymentDate;
 
-        @NotNull(message = "주문한 회원 정보가 없습니다.")
+        @Schema(description = "주문한 회원 id", example = "1")
+        @NotNull(message = "회원 id를 입력해주세요.")
         private Long memberId;
 
         public Order toDomain() {
@@ -40,12 +44,19 @@ public class OrderDto {
     @Builder
     @Getter
     public static class OrderResponse {
+        @Schema(description = "주문 id", example = "1")
         private Long id;
+        @Schema(description = "주문번호", example = "I220907ABCDE")
         private String orderNo;
+        @Schema(description = "제품명", example = "추석 선물세트🌝")
         private String productName;
+        @Schema(description = "결제일시", example = "yyyy-MM-dd HH:mm:ss")
         private String paymentDate;
+        @Schema(description = "주문한 회원 이름", example = "류다은")
         private String memberName;
+        @Schema(description = "등록일시", example = "yyyy-MM-dd HH:mm:ss")
         private String createdAt;
+        @Schema(description = "수정일시", example = "yyyy-MM-dd HH:mm:ss")
         private String updatedAt;
 
         public static OrderResponse from(Order order) {
