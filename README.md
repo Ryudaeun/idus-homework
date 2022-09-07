@@ -69,7 +69,7 @@ com.idus.homework
 
 ### Create Table SQL Path
 
-- src/main/resources/db/IdusHomework.sql
+- [src/main/resources/db/IdusHomework.sql](https://github.com/Ryudaeun/idus-homework/blob/master/src/main/resources/db/IdusHomework.sql)
 
 ### Member
 
